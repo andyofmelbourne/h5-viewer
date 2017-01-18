@@ -11,15 +11,19 @@ import h5py
 #import scipy.constants as sc
 
 import pyqtgraph as pg
-import PyQt4.QtGui
-import PyQt4.QtCore
+try:
+  from PyQt5 import QtGui, QtCore
+except ImportError:
+  from PyQt4 import QtGui, QtCore
+
 import signal
+
 #import copy 
 
 #import ConfigParser
 
 
-class Show_h5_list_widget(PyQt4.QtGui.QWidget):
+class Show_h5_list_widget(QtGui.QWidget):
     def __init__(self, filename, names = None):
         super(Show_h5_list_widget, self).__init__()
 
@@ -27,13 +31,13 @@ class Show_h5_list_widget(PyQt4.QtGui.QWidget):
         self.names    = names
         
         # add the names to Qlist thing
-        self.listWidget = PyQt4.QtGui.QListWidget(self)
+        self.listWidget = QtGui.QListWidget(self)
         #self.listWidget.setMinimumWidth(self.listWidget.sizeHintForColumn(0))
         #self.listWidget.setMinimumHeight(500)
         
         # update list button
         ####################
-        self.update_button = PyQt4.QtGui.QPushButton('update', self)
+        self.update_button = QtGui.QPushButton('update', self)
         self.update_button.clicked.connect(self.update)
 
         # get the list of groups and items
@@ -48,7 +52,7 @@ class Show_h5_list_widget(PyQt4.QtGui.QWidget):
     
     def initUI(self):
         # set the layout
-        layout = PyQt4.QtGui.QVBoxLayout()
+        layout = QtGui.QVBoxLayout()
         layout.addWidget(self.listWidget)
         layout.addWidget(self.update_button)
         
@@ -61,7 +65,7 @@ class Show_h5_list_widget(PyQt4.QtGui.QWidget):
             if ((names is None) or (names is not None and name in names)) \
                     and name not in self.dataset_names:
                 self.dataset_names.append(name)
-                self.dataset_items.append(PyQt4.QtGui.QListWidgetItem(self.listWidget))
+                self.dataset_items.append(QtGui.QListWidgetItem(self.listWidget))
                 self.dataset_items[-1].setText(name)
     
     def update(self):
@@ -70,7 +74,7 @@ class Show_h5_list_widget(PyQt4.QtGui.QWidget):
         f.close()
 
 
-class Show_nd_data_widget(PyQt4.QtGui.QWidget):
+class Show_nd_data_widget(QtGui.QWidget):
     def __init__(self):
         super(Show_nd_data_widget, self).__init__()
 
@@ -82,7 +86,7 @@ class Show_nd_data_widget(PyQt4.QtGui.QWidget):
     
     def initUI(self):
         # set the layout
-        self.layout = PyQt4.QtGui.QVBoxLayout()
+        self.layout = QtGui.QVBoxLayout()
         
         # add the layout to the central widget
         self.setLayout(self.layout)
@@ -105,7 +109,7 @@ class Show_nd_data_widget(PyQt4.QtGui.QWidget):
             if refresh :
                 self.plotW.setData(f[name][()])
             else :
-                self.plotW = self.text_label = PyQt4.QtGui.QLabel(self)
+                self.plotW = self.text_label = QtGui.QLabel(self)
                 self.plotW.setText('<b>'+name+'</b>: ' + str(f[name][()]))
 
         elif len(shape) == 1 :
@@ -205,7 +209,7 @@ class Show_nd_data_widget(PyQt4.QtGui.QWidget):
         self.show(self.filename, self.name, True)
 
 
-class View_h5_data_widget(PyQt4.QtGui.QWidget):
+class View_h5_data_widget(QtGui.QWidget):
     def __init__(self, filename, names = None):
         super(View_h5_data_widget, self).__init__()
         
@@ -221,7 +225,7 @@ class View_h5_data_widget(PyQt4.QtGui.QWidget):
         self.initUI()
 
     def initUI(self):
-        layout = PyQt4.QtGui.QHBoxLayout()
+        layout = QtGui.QHBoxLayout()
         
         # add the layout to the central widget
         self.setLayout(layout)
@@ -248,10 +252,10 @@ class View_h5_data_widget(PyQt4.QtGui.QWidget):
 
 def gui(filename):
     signal.signal(signal.SIGINT, signal.SIG_DFL) # allow Control-C
-    app = PyQt4.QtGui.QApplication([])
+    app = QtGui.QApplication([])
     
     # Qt main window
-    Mwin = PyQt4.QtGui.QMainWindow()
+    Mwin = QtGui.QMainWindow()
     Mwin.setWindowTitle(filename)
     
     cw = View_h5_data_widget(filename)
